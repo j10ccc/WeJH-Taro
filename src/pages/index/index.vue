@@ -3,7 +3,7 @@
     <home v-if="pageName === 'home'"></home>
     <my v-if="pageName === 'my'"></my>
     <pop-view v-model:show="showPop">
-      <app-list v-if="showPop"></app-list>
+      <app-list></app-list>
     </pop-view>
     <nav-bar
       @plusClick="plusClick"

@@ -1,14 +1,24 @@
 <template>
   <view
     class="wjh-pop-view"
-    :class="{
-      hidden: !show
-    }"
+    :class="[
+      {
+        'wjh-pop-view-hidden': !show
+      },
+      positionClass
+    ]"
   >
-    <view v-if="showMask" class="mask" @tap="close"></view>
+    <view
+      v-if="hasMask"
+      class="mask"
+      :class="{
+        'fully-hidden': fullyHidden
+      }"
+      @tap="close"
+      ref="maskRef"
+    ></view>
     <view
       class="wjh-pop-view-body"
-      :class="positionClass"
       :style="
         isNewIPhone() && positionClass === 'bottom' ? 'margin-bottom: 2rem' : ''
       "
@@ -18,38 +28,39 @@
   </view>
 </template>
 
-<script lang="ts">
-  import { defineComponent } from 'vue';
+<script setup lang="ts">
   import { isNewIPhone } from '@/utils/effects';
+  import { computed, toRefs, ref } from 'vue';
   import './index.scss';
 
-  export default defineComponent({
-    props: {
-      show: {
-        default: false,
-        type: Boolean
-      },
-      position: {
-        default: 'bottom'
-      },
-      mask: {
-        default: true,
-        type: Boolean
-      }
+  const props = defineProps({
+    position: {
+      type: String,
+      default: 'bottom'
     },
-    computed: {
-      positionClass(): 'bottom' | 'top' | 'left' | 'right' {
-        return this.position;
-      },
-      showMask(): boolean {
-        return this.mask;
-      }
+    show: {
+      type: Boolean,
+      default: false
     },
-    methods: {
-      isNewIPhone,
-      close() {
-        this.$emit('update:show', false);
-      }
+    mask: {
+      type: Boolean,
+      default: true
     }
   });
+  const maskRef = ref();
+  const fullyHidden = ref(true);
+  const emit = defineEmits(['update:show']);
+
+  const { position, mask } = toRefs(props);
+
+  const positionClass = computed(() => {
+    return `wjh-pop-view-${position.value}`;
+  });
+  const hasMask = computed(() => {
+    return mask;
+  });
+
+  function close() {
+    emit('update:show', false);
+  }
 </script>

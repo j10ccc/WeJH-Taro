@@ -29,7 +29,9 @@ export default defineComponent({
   render() {
     const { $slots, $props, closeModal } = this;
     return (
-      <view class={['wjh-modal', !$props.show ? 'hidden' : undefined]}>
+      <view
+        class={['wjh-modal', !$props.show ? 'wjh-modal-hidden' : undefined]}
+      >
         <view class="wjh-modal-container">
           <view class="wjh-modal-header">
             {$props.title}
