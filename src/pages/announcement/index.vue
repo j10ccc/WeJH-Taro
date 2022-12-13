@@ -28,27 +28,27 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent } from 'vue';
-  import Card from '@/components/Card/index.vue';
-  import TitleBar from '@/components/TitleBar/index.vue';
-  import dayjs from 'dayjs';
-  import { serviceStore } from '@/store';
-  import './index.scss';
+import { defineComponent } from 'vue';
+import Card from '@/components/Card/index.vue';
+import TitleBar from '@/components/TitleBar/index.vue';
+import dayjs from 'dayjs';
+import { serviceStore } from '@/store';
+import './index.scss';
 
-  export default defineComponent({
-    components: { Card, TitleBar },
-    data() {
-      return {};
-    },
-    computed: {
-      announcementList() {
-        return [...serviceStore.announcement.announcements].reverse();
-      }
-    },
-    methods: {
-      timeFotmat: (time: string) => {
-        return dayjs(time).format('YYYY年MM月DD日');
-      }
+export default defineComponent({
+  components: { Card, TitleBar },
+  data() {
+    return {};
+  },
+  computed: {
+    announcementList() {
+      return [...serviceStore.announcement.announcements].reverse();
     }
-  });
+  },
+  methods: {
+    timeFotmat: (time: string) => {
+      return dayjs(time).format('YYYY年MM月DD日');
+    }
+  }
+});
 </script>

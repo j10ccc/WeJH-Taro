@@ -17,54 +17,54 @@
 </template>
 
 <script lang="ts">
-  import { WButton } from '../button';
-  import { computed, defineComponent, reactive, ref } from 'vue';
-  import { systemStore } from '@/store';
-  export default defineComponent({
-    components: {
-      WButton
-    },
-    props: {
-      term: Object
-    },
-    setup(props) {
-      let year = parseInt(
-        systemStore?.generalInfo?.termYear
-          ? systemStore?.generalInfo?.termYear
-          : new Date().getFullYear()
-      );
-      const selector = reactive([['上', '下', '短']]);
-      const selectorChecked = ref([props.term?.year, props.term?.term]);
-      let years: string[] = [];
+import { WButton } from '../button';
+import { computed, defineComponent, reactive, ref } from 'vue';
+import { systemStore } from '@/store';
+export default defineComponent({
+  components: {
+    WButton
+  },
+  props: {
+    term: Object
+  },
+  setup(props) {
+    let year = parseInt(
+      systemStore?.generalInfo?.termYear
+        ? systemStore?.generalInfo?.termYear
+        : new Date().getFullYear()
+    );
+    const selector = reactive([['上', '下', '短']]);
+    const selectorChecked = ref([props.term?.year, props.term?.term]);
+    let years: string[] = [];
 
-      for (let i = 0; i < 4; i++) years.push(`${year - i}/${year - i + 1}`);
-      selector.unshift(years);
-      const selectorValue = computed(() => [
-        selector[0].indexOf(
-          `${selectorChecked.value[0]}/${
-            parseInt(selectorChecked.value[0]) + 1
-          }`
-        ),
-        selector[1].indexOf(selectorChecked.value[1])
-      ]);
-      return {
-        selector,
-        selectorValue,
-        selectorChecked
-      };
-    },
-    methods: {
-      onChange(e) {
-        this.selectorChecked = this.selector.map(
-          (ex, index) => ex[e.detail.value[index]]
-        );
-        this.selectorChecked[0] = this.selectorChecked[0].split('/')[0];
-        this.$emit('changed', {
-          year: this.selectorChecked[0],
-          term: this.selectorChecked[1]
-        });
-      }
+    for (let i = 0; i < 4; i++) years.push(`${year - i}/${year - i + 1}`);
+    selector.unshift(years);
+    const selectorValue = computed(() => [
+      selector[0].indexOf(
+        `${selectorChecked.value[0]}/${
+          parseInt(selectorChecked.value[0]) + 1
+        }`
+      ),
+      selector[1].indexOf(selectorChecked.value[1])
+    ]);
+    return {
+      selector,
+      selectorValue,
+      selectorChecked
+    };
+  },
+  methods: {
+    onChange(e) {
+      this.selectorChecked = this.selector.map(
+        (ex, index) => ex[e.detail.value[index]]
+      );
+      this.selectorChecked[0] = this.selectorChecked[0].split('/')[0];
+      this.$emit('changed', {
+        year: this.selectorChecked[0],
+        term: this.selectorChecked[1]
+      });
     }
-  });
+  }
+});
 </script>
 <style></style>

@@ -37,47 +37,47 @@
   </view>
 </template>
 <script setup lang="ts">
-  import './index.scss';
-  import Taro from '@tarojs/taro';
-  import { ref } from 'vue';
-  import store, { systemStore } from '@/store';
-  import { questionnaireInfo } from '@/constants/updateInfo';
+import './index.scss';
+import Taro from '@tarojs/taro';
+import { ref } from 'vue';
+import store, { systemStore } from '@/store';
+import { questionnaireInfo } from '@/constants/updateInfo';
 
-  const showQuestionnaire = ref(true);
-  const isFold = ref(false);
-  isFold.value = systemStore.questionnaire.state === 'fold' ? true : false;
+const showQuestionnaire = ref(true);
+const isFold = ref(false);
+isFold.value = systemStore.questionnaire.state === 'fold' ? true : false;
 
-  const closeQuesionnaire = () => {
-    Taro.showModal({
-      content: '您确定要关闭此选项卡吗？',
-      cancelText: '仅一次',
-      confirmText: '永久关闭',
-      success(res) {
-        if (res.confirm)
-          store.commit('setQuestionnaire', {
-            path: systemStore.questionnaire.path,
-            state: 'close'
-          });
-        else if (res.cancel) {
-          showQuestionnaire.value = false;
-        }
+const closeQuesionnaire = () => {
+  Taro.showModal({
+    content: '您确定要关闭此选项卡吗？',
+    cancelText: '仅一次',
+    confirmText: '永久关闭',
+    success(res) {
+      if (res.confirm)
+        store.commit('setQuestionnaire', {
+          path: systemStore.questionnaire.path,
+          state: 'close'
+        });
+      else if (res.cancel) {
+        showQuestionnaire.value = false;
       }
-    });
-  };
+    }
+  });
+};
 
-  const toggleFold = (state: boolean) => {
-    isFold.value = state;
-    store.commit('setQuestionnaire', {
-      path: systemStore.questionnaire.path,
-      state: state ? 'fold' : 'open'
-    });
-  };
+const toggleFold = (state: boolean) => {
+  isFold.value = state;
+  store.commit('setQuestionnaire', {
+    path: systemStore.questionnaire.path,
+    state: state ? 'fold' : 'open'
+  });
+};
 
-  const openQuestionnaire = () => {
-    toggleFold(true);
-    Taro.navigateToMiniProgram({
-      appId: questionnaireInfo.appId,
-      path: questionnaireInfo.path
-    });
-  };
+const openQuestionnaire = () => {
+  toggleFold(true);
+  Taro.navigateToMiniProgram({
+    appId: questionnaireInfo.appId,
+    path: questionnaireInfo.path
+  });
+};
 </script>

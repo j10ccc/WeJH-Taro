@@ -60,51 +60,51 @@
 </template>
 
 <script lang="ts">
-  import { CanteenService } from '@/services';
-  import Card from '@/components/Card/index.vue';
-  import TitleBar from '@/components/TitleBar/index.vue';
-  import { defineComponent } from 'vue';
-  import { serviceStore } from '@/store';
-  import { helpText } from '@/constants/copywriting';
-  import { WModal } from '@/components/modal';
-  import './index.scss';
+import { CanteenService } from '@/services';
+import Card from '@/components/Card/index.vue';
+import TitleBar from '@/components/TitleBar/index.vue';
+import { defineComponent } from 'vue';
+import { serviceStore } from '@/store';
+import { helpText } from '@/constants/copywriting';
+import { WModal } from '@/components/modal';
+import './index.scss';
 
-  export default defineComponent({
-    components: { Card, TitleBar, WModal },
-    computed: {
-      updateTime(): string {
-        return serviceStore.canteen.updateTime.flow;
-      },
-      flow() {
-        if (serviceStore.canteen.flow?.data)
-          return [...serviceStore.canteen.flow.data].reverse();
-        else return [];
-      }
+export default defineComponent({
+  components: { Card, TitleBar, WModal },
+  computed: {
+    updateTime(): string {
+      return serviceStore.canteen.updateTime.flow;
     },
-    data() {
-      return {
-        showModal: false,
-        helpContent: helpText.canteenflow
-      };
-    },
-    methods: {
-      getCanteenFlow: CanteenService.getCanteenFlow,
-      nameMapColor(char: string) {
-        const colorMap = {
-          家: 'blue',
-          养: 'blue',
-          精: 'green',
-          毓: 'green',
-          博: 'green'
-        };
-        return { backgroundColor: `var(--wjh-color-${colorMap[char]})` };
-      },
-      showHelp() {
-        this.showModal = true;
-      }
-    },
-    mounted() {
-      this.getCanteenFlow();
+    flow() {
+      if (serviceStore.canteen.flow?.data)
+        return [...serviceStore.canteen.flow.data].reverse();
+      else return [];
     }
-  });
+  },
+  data() {
+    return {
+      showModal: false,
+      helpContent: helpText.canteenflow
+    };
+  },
+  methods: {
+    getCanteenFlow: CanteenService.getCanteenFlow,
+    nameMapColor(char: string) {
+      const colorMap = {
+        家: 'blue',
+        养: 'blue',
+        精: 'green',
+        毓: 'green',
+        博: 'green'
+      };
+      return { backgroundColor: `var(--wjh-color-${colorMap[char]})` };
+    },
+    showHelp() {
+      this.showModal = true;
+    }
+  },
+  mounted() {
+    this.getCanteenFlow();
+  }
+});
 </script>

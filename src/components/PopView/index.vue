@@ -19,37 +19,37 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent } from 'vue';
-  import { isNewIPhone } from '@/utils/effects';
-  import './index.scss';
+import { defineComponent } from 'vue';
+import { isNewIPhone } from '@/utils/effects';
+import './index.scss';
 
-  export default defineComponent({
-    props: {
-      show: {
-        default: false,
-        type: Boolean
-      },
-      position: {
-        default: 'bottom'
-      },
-      mask: {
-        default: true,
-        type: Boolean
-      }
+export default defineComponent({
+  props: {
+    show: {
+      default: false,
+      type: Boolean
     },
-    computed: {
-      positionClass(): 'bottom' | 'top' | 'left' | 'right' {
-        return this.position;
-      },
-      showMask(): boolean {
-        return this.mask;
-      }
+    position: {
+      default: 'bottom'
     },
-    methods: {
-      isNewIPhone,
-      close() {
-        this.$emit('update:show', false);
-      }
+    mask: {
+      default: true,
+      type: Boolean
     }
-  });
+  },
+  computed: {
+    positionClass(): 'bottom' | 'top' | 'left' | 'right' {
+      return this.position;
+    },
+    showMask(): boolean {
+      return this.mask;
+    }
+  },
+  methods: {
+    isNewIPhone,
+    close() {
+      this.$emit('update:show', false);
+    }
+  }
+});
 </script>

@@ -53,91 +53,91 @@
 </template>
 
 <script lang="ts">
-  import { serviceStore } from '@/store';
-  import Card from '@/components/Card/index.vue';
-  import TitleBar from '@/components/TitleBar/index.vue';
-  import { WList, WListItem } from '@/components/list/index';
-  import { WButton } from '@/components/button';
-  import Taro from '@tarojs/taro';
-  import { UserService } from '@/services';
-  import { defineComponent } from 'vue';
-  import store from '@/store';
-  import './index.scss';
+import { serviceStore } from '@/store';
+import Card from '@/components/Card/index.vue';
+import TitleBar from '@/components/TitleBar/index.vue';
+import { WList, WListItem } from '@/components/list/index';
+import { WButton } from '@/components/button';
+import Taro from '@tarojs/taro';
+import { UserService } from '@/services';
+import { defineComponent } from 'vue';
+import store from '@/store';
+import './index.scss';
 
-  export default defineComponent({
-    components: { TitleBar, Card, WList, WListItem, WButton },
-    data() {
-      return {
-        options: [
-          [
-            {
-              title: '绑定',
-              url: '/pages/bind/index'
-            },
-            {
-              title: '实验室',
-              url: '/pages/lab/index'
-            }
-          ],
-          [
-            {
-              title: '反馈',
-              url: '/pages/connect/index'
-            },
-            {
-              title: '关于',
-              url: '/pages/about/index'
-            }
-          ],
-          [
-            {
-              title: '设置',
-              url: '/pages/setting/index'
-            }
-          ]
-        ],
-        showPop: false
-      };
-    },
-    methods: {
-      nav2activation() {
-        Taro.navigateTo({
-          url: '/pages/activation/index'
-        });
-      },
-      nav2url(url: string | undefined) {
-        if (url)
-          Taro.navigateTo({
-            url: url
-          });
-      },
-      getUserWXInfo() {
-        Taro.getUserProfile({
-          desc: '用于获取头像和昵称',
-          success: (res: any) => {
-            const { avatarUrl, nickName } = res.userInfo;
-            store.commit('setUserWXProfile', { avatarUrl, nickName });
+export default defineComponent({
+  components: { TitleBar, Card, WList, WListItem, WButton },
+  data() {
+    return {
+      options: [
+        [
+          {
+            title: '绑定',
+            url: '/pages/bind/index'
           },
-          complete: (res) => {
-            console.log(res);
+          {
+            title: '实验室',
+            url: '/pages/lab/index'
           }
+        ],
+        [
+          {
+            title: '反馈',
+            url: '/pages/connect/index'
+          },
+          {
+            title: '关于',
+            url: '/pages/about/index'
+          }
+        ],
+        [
+          {
+            title: '设置',
+            url: '/pages/setting/index'
+          }
+        ]
+      ],
+      showPop: false
+    };
+  },
+  methods: {
+    nav2activation() {
+      Taro.navigateTo({
+        url: '/pages/activation/index'
+      });
+    },
+    nav2url(url: string | undefined) {
+      if (url)
+        Taro.navigateTo({
+          url: url
         });
-      }
     },
-    computed: {
-      userInfo() {
-        return serviceStore.user.info;
-      },
-      userWXProfile() {
-        return serviceStore.user.wxProfile;
-      },
-      isActive() {
-        return serviceStore.user.isActive;
-      }
-    },
-    mounted() {
-      if (serviceStore.user.isActive && !serviceStore.user.info)
-        UserService.getUserInfo();
+    getUserWXInfo() {
+      Taro.getUserProfile({
+        desc: '用于获取头像和昵称',
+        success: (res: any) => {
+          const { avatarUrl, nickName } = res.userInfo;
+          store.commit('setUserWXProfile', { avatarUrl, nickName });
+        },
+        complete: (res) => {
+          console.log(res);
+        }
+      });
     }
-  });
+  },
+  computed: {
+    userInfo() {
+      return serviceStore.user.info;
+    },
+    userWXProfile() {
+      return serviceStore.user.wxProfile;
+    },
+    isActive() {
+      return serviceStore.user.isActive;
+    }
+  },
+  mounted() {
+    if (serviceStore.user.isActive && !serviceStore.user.info)
+      UserService.getUserInfo();
+  }
+});
 </script>

@@ -39,10 +39,10 @@
             </view>
           </view>
           <view class="col">
-            <reflesh-button
+            <refresh-button
               @tap="updateData"
-              :is-refleshing="isRefleshing"
-            ></reflesh-button>
+              :is-refreshing="isRefreshing"
+            ></refresh-button>
           </view>
         </template>
         <view>
@@ -86,80 +86,80 @@
 </template>
 
 <script lang="ts">
-  import './index.scss';
-  import { computed, defineComponent } from 'vue';
-  import Card from '@/components/Card/index.vue';
-  import TitleBar from '@/components/TitleBar/index.vue';
-  import RefleshButton from '@/components/RefleshButton/index.vue';
-  import { WButton } from '@/components/button';
-  import { LibraryService } from '@/services';
-  import dayjs from 'dayjs';
-  import { serviceStore } from '@/store';
-  import { BorrowBooksInfo } from '@/types/BorrowBooksInfo';
+import './index.scss';
+import { computed, defineComponent } from 'vue';
+import Card from '@/components/Card/index.vue';
+import TitleBar from '@/components/TitleBar/index.vue';
+import RefreshButton from '@/components/RefreshButton/index.vue';
+import { WButton } from '@/components/button';
+import { LibraryService } from '@/services';
+import dayjs from 'dayjs';
+import { serviceStore } from '@/store';
+import { BorrowBooksInfo } from '@/types/BorrowBooksInfo';
 
-  export default defineComponent({
-    components: { Card, TitleBar, WButton, RefleshButton },
-    setup() {
-      LibraryService.getLibraryCurrent();
-      LibraryService.getLibraryHistory();
+export default defineComponent({
+  components: { Card, TitleBar, WButton, RefreshButton },
+  setup() {
+    LibraryService.getLibraryCurrent();
+    LibraryService.getLibraryHistory();
 
-      const updateTime = computed(() => serviceStore.library.updateTime);
-      const todayUpdateTime = computed(() =>
-        dayjs(updateTime.value.current).format('MM-DD HH:mm')
-      );
-      const historyUpdateTime = computed(() =>
-        dayjs(updateTime.value.history).format('MM-DD HH:mm')
-      );
-      return {
-        updateTime,
-        todayUpdateTime,
-        historyUpdateTime
-      };
+    const updateTime = computed(() => serviceStore.library.updateTime);
+    const todayUpdateTime = computed(() =>
+      dayjs(updateTime.value.current).format('MM-DD HH:mm')
+    );
+    const historyUpdateTime = computed(() =>
+      dayjs(updateTime.value.history).format('MM-DD HH:mm')
+    );
+    return {
+      updateTime,
+      todayUpdateTime,
+      historyUpdateTime
+    };
+  },
+  computed: {
+    borrowList(): BorrowBooksInfo[] {
+      if (this.isSelectToday) return this.current;
+      else if (this.isSelectHistory) return this.history;
+      return [];
     },
-    computed: {
-      borrowList(): BorrowBooksInfo[] {
-        if (this.isSelectToday) return this.current;
-        else if (this.isSelectHistory) return this.history;
-        return [];
-      },
-      history() {
-        return serviceStore.library.history;
-      },
-      current() {
-        return serviceStore.library.current;
-      },
-      currentCount() {
-        return this.current ? this.current.length : 0;
-      },
-      currentExtendedCount() {
-        return this.current
-          ? this.current.filter((item) => item.IsExtended > 0).length
-          : 0;
-      }
+    history() {
+      return serviceStore.library.history;
     },
-    data() {
-      return {
-        isSelectToday: true,
-        isSelectHistory: false,
-        isRefleshing: false
-      };
+    current() {
+      return serviceStore.library.current;
     },
-    methods: {
-      async updateData() {
-        if (this.isRefleshing) return;
-        this.isRefleshing = true;
-        if (this.isSelectToday) await LibraryService.getLibraryCurrent();
-        else await LibraryService.getLibraryHistory();
-        this.isRefleshing = false;
-      },
-      historyClick() {
-        this.isSelectToday = false;
-        this.isSelectHistory = true;
-      },
-      todayClick() {
-        this.isSelectToday = true;
-        this.isSelectHistory = false;
-      }
+    currentCount() {
+      return this.current ? this.current.length : 0;
+    },
+    currentExtendedCount() {
+      return this.current
+        ? this.current.filter((item) => item.IsExtended > 0).length
+        : 0;
     }
-  });
+  },
+  data() {
+    return {
+      isSelectToday: true,
+      isSelectHistory: false,
+      isRefreshing: false
+    };
+  },
+  methods: {
+    async updateData() {
+      if (this.isRefreshing) return;
+      this.isRefreshing = true;
+      if (this.isSelectToday) await LibraryService.getLibraryCurrent();
+      else await LibraryService.getLibraryHistory();
+      this.isRefreshing = false;
+    },
+    historyClick() {
+      this.isSelectToday = false;
+      this.isSelectHistory = true;
+    },
+    todayClick() {
+      this.isSelectToday = true;
+      this.isSelectHistory = false;
+    }
+  }
+});
 </script>

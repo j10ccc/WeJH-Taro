@@ -16,41 +16,41 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, PropType } from 'vue';
-  import './index.scss';
-  const colorSetDefault = [
-    '#62e4c7',
-    '#72d0fe',
-    '#22caca',
-    '#fdc362',
-    '#ffcf4d'
-  ];
-  const colorSetLight = ['#ffedcd', '#fff6c9'];
-  export default defineComponent({
-    name: 'Card',
-    props: {
-      title: String,
-      color: Number,
-      colormode: String,
-      size: {
-        type: String as PropType<'small' | 'middle'>,
-        default: 'middle'
-      }
-    },
-    computed: {
-      randColorStyle() {
-        if (this.color === undefined) return undefined;
-        let colorSet = colorSetDefault;
-        if (this.colormode === 'light') colorSet = colorSetLight;
-        const number = this.color % colorSet.length;
-        return `background-color: ${colorSet[number]};`;
-      }
-    },
-    methods: {
-      getStyle() {
-        const styleList = [this.randColorStyle];
-        return styleList.join(' ');
-      }
+import { defineComponent, PropType } from 'vue';
+import './index.scss';
+const colorSetDefault = [
+  '#62e4c7',
+  '#72d0fe',
+  '#22caca',
+  '#fdc362',
+  '#ffcf4d'
+];
+const colorSetLight = ['#ffedcd', '#fff6c9'];
+export default defineComponent({
+  name: 'Card',
+  props: {
+    title: String,
+    color: Number,
+    colormode: String,
+    size: {
+      type: String as PropType<'small' | 'middle'>,
+      default: 'middle'
     }
-  });
+  },
+  computed: {
+    randColorStyle() {
+      if (this.color === undefined) return undefined;
+      let colorSet = colorSetDefault;
+      if (this.colormode === 'light') colorSet = colorSetLight;
+      const number = this.color % colorSet.length;
+      return `background-color: ${colorSet[number]};`;
+    }
+  },
+  methods: {
+    getStyle() {
+      const styleList = [this.randColorStyle];
+      return styleList.join(' ');
+    }
+  }
+});
 </script>

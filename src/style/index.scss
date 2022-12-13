@@ -1,4 +1,4 @@
-@import './components/input';
+@import './theme.scss';
 
 page {
   background-color: #f5f5f5;
@@ -33,6 +33,15 @@ scroll-view {
   background-position: bottom 0 right 50%;
   background-repeat: no-repeat;
 }
+
+input {
+  border: 2Px solid var(--wjh-color-light);
+  padding: 0.3rem 0.5rem;
+  margin: 0.5rem 0;
+  border-radius: 0.2rem;
+}
+
+
 
 // TODO: 静态图标统一到 iconfont 中
 
