@@ -31,6 +31,7 @@ import { ZFService } from '@/services';
 import { computed, ref } from 'vue';
 import store, { serviceStore, systemStore } from '@/store';
 import { updateInfo } from '@/constants/index';
+import './index.scss';
 
 const showPop = ref(false);
 const pageName = ref('home');

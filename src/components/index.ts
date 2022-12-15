@@ -14,6 +14,8 @@ import QuickView from './QuickView/index.vue';
 import RefreshButton from './RefreshButton/index.vue';
 import RoomPicker from './RoomPicker/index.vue';
 import SchoolCardQuickView from './SchoolCardQuickView/index.vue';
+import TermPicker from './TermPicker/index.vue';
+import TitleBar from './TitleBar/index.vue';
 import WeekPicker from './WeekPicker/index.vue';
 
 import { WList, WListItem } from './list';
@@ -34,7 +36,6 @@ export {
   LibraryQuickView,
   WButton,
   PopView,
-  WeekPicker,
   My,
   NavBar,
   Questionnaire,
@@ -42,6 +43,9 @@ export {
   RefreshButton,
   RoomPicker,
   SchoolCardQuickView,
+  TermPicker,
+  TitleBar,
+  WeekPicker,
 
   WList,
   WListItem,

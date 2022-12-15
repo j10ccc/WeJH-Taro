@@ -11,10 +11,11 @@
     <card
       v-for="(item, index) in todayLessonTable"
       :key="item.lessonName"
-      :style="
-        index % 2
-          ? 'background-color: var(--wjh-color-yellow-light)'
-          : 'background-color: var(--wjh-color-orange-light)'
+      :style="{
+        backgroundColor: index % 2
+          ? 'var(--wjh-color-yellow-light)'
+          : 'var(--wjh-color-orange-light)'
+      } as CSSProperties
       "
     >
       <view class="lesson-item">
@@ -54,125 +55,121 @@
   </quick-view>
 </template>
 
-<script lang="ts">
-  import Card from '@/components/Card/index.vue';
-  import QuickView from '@/components/QuickView/index.vue';
-  import Taro from '@tarojs/taro';
-  import { ZFService } from '@/services';
-  import dayjs from 'dayjs';
-  import { defineComponent } from 'vue';
-  import { serviceStore, systemStore } from '@/store';
-  import './index.scss';
-  import { Lesson } from '@/types/Lesson';
-  import { dayScheduleStartTime } from '@/constants/dayScheduleStartTime';
-  import { useTimeInstance } from '@/utils/hooks';
-  let timer: NodeJS.Timeout | undefined = undefined;
+<script setup lang="ts">
+import Card from '@/components/Card/index.vue';
+import QuickView from '@/components/QuickView/index.vue';
+import Taro from '@tarojs/taro';
+import { ZFService } from '@/services';
+import dayjs from 'dayjs';
+import { CSSProperties, computed, ref, onMounted } from 'vue';
+import { serviceStore, systemStore } from '@/store';
+import './index.scss';
+import { Lesson } from '@/types/Lesson';
+import { dayScheduleStartTime } from '@/constants/dayScheduleStartTime';
+import { useTimeInstance } from '@/utils/hooks';
+let timer: NodeJS.Timeout | undefined = undefined;
+// let timer:
 
-  export default defineComponent({
-    components: { QuickView, Card },
+const { hide } = defineProps<{hide: boolean }>();
+const todayLessonTable = ref();
 
-    props: {
-      hide: Boolean
-    },
-    computed: {
-      todayLessonTable() {
-        return this.getTodayLessonTable();
-      },
-      updateTimeString() {
-        if (!this.updateTime) return '更新失败';
-        return dayjs(this.updateTime).fromNow();
-      },
-      updateTime() {
-        let updateTime: Date | undefined = undefined;
-        try {
-          updateTime =
-            serviceStore.zf.lessonsTableInfo[systemStore.generalInfo.termYear][
-              systemStore.generalInfo.term
-            ]?.updateTime;
-          if (updateTime) return updateTime;
-          else return undefined;
-        } catch (e) {
-          console.log(e);
-          return undefined;
+onMounted(() => {
+  getTodayLessonTable()
+});
+
+const updateTimeString = computed(() => {
+  if (!updateTime.value) return '更新失败';
+  return dayjs(updateTime.value).fromNow();
+})
+
+const updateTime = computed(() => {
+  let updateTime: Date | undefined = undefined;
+  try {
+    updateTime =
+        serviceStore.zf.lessonsTableInfo[systemStore.generalInfo.termYear][
+          systemStore.generalInfo.term
+        ]?.updateTime;
+    if (updateTime) return updateTime;
+    else return undefined;
+  } catch (e) {
+    console.log(e);
+    return undefined;
+  }
+});
+watchEffect
+  watch: {
+    hide: {
+      immediate: true,
+      handler(val) {
+        if (val == true) {
+          if (timer) clearInterval(timer);
+        } else {
+          if (!serviceStore.zf.lessonsTableInfo)
+            ZFService.updateLessonTable();
+          this.getTodayLessonTable();
+          timer = setInterval(this.getTodayLessonTable, 30000);
+          // 30 秒刷新一次
         }
-      }
-    },
-    watch: {
-      hide: {
-        immediate: true,
-        handler(val) {
-          if (val == true) {
-            if (timer) clearInterval(timer);
-          } else {
-            if (!serviceStore.zf.lessonsTableInfo)
-              ZFService.updateLessonTable();
-            this.getTodayLessonTable();
-            timer = setInterval(this.getTodayLessonTable, 30000);
-            // 30 秒刷新一次
-          }
-        }
-      }
-    },
-    methods: {
-      nav2Lesson() {
-        Taro.navigateTo({ url: '/pages/lessonstable/index' });
-      },
-      sectionsTimeString(sections: string) {
-        let arr = sections.split('-');
-        return `${this.getLessonTimeInstance(parseInt(arr[0])).format(
-          'HH:mm'
-        )}-${this.getLessonTimeInstance(parseInt(arr[1]), 45).format('HH:mm')}`;
-      },
-      getLessonTimeInstance(jc: number, offset: number = 0) {
-        return useTimeInstance(
-          dayScheduleStartTime[jc - 1].hour,
-          dayScheduleStartTime[jc - 1].min + offset
-        );
-      },
-      goLessonAlert(sections: string) {
-        let arr = sections.split('-');
-        let detAfter =
-          this.getLessonTimeInstance(arr[0]).valueOf() - dayjs().valueOf();
-        if (detAfter > 0) return dayjs(detAfter).utc().format('HH:mm');
-        else return null;
-      },
-      goLessonAlertEm(sections: string) {
-        // comment: detMin 暂时用不到，后期改动距离上课时间显示规则再重用
-        let arr = sections.split('-');
-        let detMin = this.getLessonTimeInstance(arr[0]).diff(
-          dayjs(),
-          'minute',
-          true
-        );
-        return detMin;
-      },
-      getTodayLessonTable(): Lesson[] | undefined {
-        let table = ZFService.getTodayLessonTable();
-        table?.forEach((item) => {
-          item['detMin'] = this.goLessonAlertEm(item.sections);
-          item['detTime'] = this.goLessonAlert(item.sections);
-        });
-        return table;
-      },
-      getTimeString(time: string) {
-        const hour = parseInt(time.split(':')[0]);
-        const min = parseInt(time.split(':')[1]);
-        return `${hour ? hour + '小时' : ''}${min ? min + '分钟' : ''}`;
-      },
-      lessonState(sections: string): 'before' | 'taking' | 'after' {
-        let arr = sections.split('-');
-        let detAfter =
-          this.getLessonTimeInstance(arr[0]).valueOf() - dayjs().valueOf();
-        let detBefore =
-          this.getLessonTimeInstance(arr[1], 45).valueOf() - dayjs().valueOf();
-
-        if (detAfter > 0) return 'before';
-        if (detAfter < 0 && detBefore > 0) return 'taking';
-        return 'after';
-      },
-      handleTapHelp() {
-        this.$emit('showHelp', 'lessons-table');
       }
     }
-  });
+  }
+    function nav2Lesson() {
+      Taro.navigateTo({ url: '/pages/lessonstable/index' });
+    }
+    function sectionsTimeString(sections: string) {
+      let arr = sections.split('-');
+      return `${this.getLessonTimeInstance(parseInt(arr[0])).format(
+        'HH:mm'
+      )}-${this.getLessonTimeInstance(parseInt(arr[1]), 45).format('HH:mm')}`;
+    }
+    function getLessonTimeInstance(jc: number, offset: number = 0) {
+      return useTimeInstance(
+        dayScheduleStartTime[jc - 1].hour,
+        dayScheduleStartTime[jc - 1].min + offset
+      );
+    }
+    function goLessonAlert(sections: string) {
+      let arr = sections.split('-');
+      let detAfter =
+          this.getLessonTimeInstance(arr[0]).valueOf() - dayjs().valueOf();
+      if (detAfter > 0) return dayjs(detAfter).utc().format('HH:mm');
+      else return null;
+    }
+    function goLessonAlertEm(sections: string) {
+      // comment: detMin 暂时用不到，后期改动距离上课时间显示规则再重用
+      let arr = sections.split('-');
+      let detMin = this.getLessonTimeInstance(arr[0]).diff(
+        dayjs(),
+        'minute',
+        true
+      );
+      return detMin;
+    }
+    function getTodayLessonTable() {
+      let table = ZFService.getTodayLessonTable();
+      table?.forEach((item) => {
+        item['detMin'] = this.goLessonAlertEm(item.sections);
+        item['detTime'] = this.goLessonAlert(item.sections);
+      });
+      todayLessonTable.value = table;
+    }
+    function getTimeString(time: string) {
+      const hour = parseInt(time.split(':')[0]);
+      const min = parseInt(time.split(':')[1]);
+      return `${hour ? hour + '小时' : ''}${min ? min + '分钟' : ''}`;
+    }
+    function lessonState(sections: string): 'before' | 'taking' | 'after' {
+      let arr = sections.split('-');
+      let detAfter =
+          this.getLessonTimeInstance(arr[0]).valueOf() - dayjs().valueOf();
+      let detBefore =
+          this.getLessonTimeInstance(arr[1], 45).valueOf() - dayjs().valueOf();
+
+      if (detAfter > 0) return 'before';
+      if (detAfter < 0 && detBefore > 0) return 'taking';
+      return 'after';
+    }
+    function handleTapHelp() {
+      this.$emit('showHelp', 'lessons-table');
+    }
 </script>

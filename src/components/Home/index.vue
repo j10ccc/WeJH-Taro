@@ -11,10 +11,10 @@
       <questionnaire
         v-if="isQuestionnaireAccess() && isNeverShowQuestionnaire"
       />
-      <lesson-table-quick-view
+      <lessons-table-quick-view
         v-if="isBindZf"
         @show-help="showHelp"
-      ></lesson-table-quick-view>
+      ></lessons-table-quick-view>
       <school-card-quick-view
         v-if="isBindCard"
         @show-help="showHelp"
@@ -39,15 +39,16 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import store, { serviceStore, systemStore } from '@/store';
-import LessonTableQuickView from '@/components/LessonsTableQuickView/index.vue';
-import SchoolCardQuickView from '@/components/SchoolCardQuickView/index.vue';
-import LibraryQuickView from '@/components/LibraryQuickView/index.vue';
-import Questionnaire from '@/components/Questionnaire/index.vue';
-import TitleBar from '@/components/TitleBar/index.vue';
-import { WButton } from '@/components/button';
-import Card from '@/components/Card/index.vue';
-import Alarm from '@/components/Alarm/index.vue';
-import { WModal } from '../modal';
+import { Alarm,
+  WButton,
+  Card,
+  LibraryQuickView,
+  LessonsTableQuickView,
+  Questionnaire,
+  WModal,
+  SchoolCardQuickView,
+  TitleBar
+} from '@/components/index';
 import { helpText } from '@/constants/copywriting';
 import Taro from '@tarojs/taro';
 import { SystemService } from '@/services';

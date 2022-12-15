@@ -276,28 +276,4 @@ watch(
   { immediate: true }
 );
 
-/*   function getRenderLineNumber(index: number) {
-    let height;
-    let width;
-    Taro.nextTick(() => {
-      Taro.createSelectorQuery()
-        .selectAll('.class-card')
-        .fields({ size: true })
-        .exec((res) => {
-          height = res[0][index].height;
-          width = res[0][index].width;
-          console.log(height);
-        });
-    });
-    console.log(height);
-    return Math.floor(height / (width / 12));
-  }
-  () => {
-    Taro.createSelectorQuery()
-      .selectAll('.class-card')
-      .fields({ size: true })
-      .exec((res) => {
-        console.log(res);
-      });
-  }; */
 </script>

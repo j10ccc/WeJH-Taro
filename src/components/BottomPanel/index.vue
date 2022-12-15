@@ -6,14 +6,9 @@
     <slot />
   </view>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
 import { isNewIPhone } from '@/utils/effects';
-import { defineComponent } from 'vue';
 import './index.scss';
 
-export default defineComponent({
-  methods: {
-    isNewIPhone
-  }
-});
 </script>

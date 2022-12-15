@@ -22,10 +22,7 @@ export default {
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#fff',
-    // navigationBarBackgroundColor: '@navBgColor',
-    // navigationBarTextStyle: '@navTxtStyle',
     navigationBarTextStyle: 'black',
     navigationStyle: 'custom'
   }
-  // themeLocation: 'theme.json'
 };
