@@ -7,7 +7,7 @@ import LessonsTable from './LessonsTable/index.vue';
 import LessonsTableQuickView from './LessonsTableQuickView/index.vue';
 import LibraryQuickView from './LibraryQuickView/index.vue';
 import My from './My/index.vue';
-import NavBar from './NavBar/index.vue';
+import TabBar from './TabBar/index.vue';
 import PopView from './PopView/index.vue';
 import Questionnaire from './Questionnaire/index.vue';
 import QuickView from './QuickView/index.vue';
@@ -37,7 +37,7 @@ export {
   WButton,
   PopView,
   My,
-  NavBar,
+  TabBar,
   Questionnaire,
   QuickView,
   RefreshButton,

@@ -5,7 +5,7 @@
     <pop-view v-model:show="showApplist">
       <app-list v-if="showApplist" />
     </pop-view>
-    <nav-bar
+    <tab-bar
       v-model:page-name="pageName"
       v-model:show-applist="showApplist"
     />
@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { AppList, NavBar, PopView, Home, My } from '@/components/index';
+import { AppList, TabBar, PopView, Home, My } from '@/components/index';
 import Taro from '@tarojs/taro';
 import { WModal } from '@/components/modal';
 import { ref } from 'vue';
