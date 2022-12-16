@@ -132,7 +132,11 @@ export default class ZFService {
     return lessons;
   }
 
-  // comment: 从全局状态中取出课表
+  /**
+   * 从缓存中取出课表
+   * @param data 学期信息
+   * @returns 该学期课表
+   */
   static getLessonTable(data?: {
     year: string;
     term: string;
@@ -152,7 +156,12 @@ export default class ZFService {
     );
   }
 
-  // comment: practiceLessonTable
+  /**
+   * 从缓存中获取 **实践** 课表
+   * @Deprecated 无此需求，没使用过
+   * @param 学期信息
+   * @returns
+   */
   static getPracticeLessonsTable(data?: {
     year: string;
     term: string;

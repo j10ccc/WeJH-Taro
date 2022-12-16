@@ -18,11 +18,7 @@
       v-else
       :key="item.libraryID"
       class="book-card"
-      :style="
-        index % 2
-          ? 'background-color: var(--wjh-color-yellow-light)'
-          : 'background-color: var(--wjh-color-orange-light)'
-      "
+      :style="bookCardBackgroundColor(index)"
     >
       <view class="book-name">
         {{ item.name }}
@@ -45,7 +41,7 @@ import QuickView from '../QuickView/index.vue';
 import Taro from '@tarojs/taro';
 import dayjs from 'dayjs';
 import Card from '@/components/Card/index.vue';
-import { computed } from 'vue';
+import { CSSProperties, computed } from 'vue';
 import { serviceStore } from '@/store';
 import './index.scss';
 const borrowUpdateTimeString = computed(() => {
@@ -53,9 +49,20 @@ const borrowUpdateTimeString = computed(() => {
   if (updateTime) return dayjs(updateTime).fromNow();
   else return '更新失败';
 });
+
 const current = computed(() => {
   return serviceStore.library.current;
 });
+
+const bookCardBackgroundColor = (index: number): CSSProperties => {
+  return {
+    backgroundColor: `
+      var(--wjh-color-
+      ${index % 2 ? 'yellow' : 'orange'}
+      -light)`
+  };
+};
+
 function nav() {
   Taro.navigateTo({ url: '/pages/library/index' });
 }

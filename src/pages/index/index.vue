@@ -2,14 +2,12 @@
   <view class="background">
     <home v-if="pageName === 'home'" />
     <my v-if="pageName === 'my'" />
-    <pop-view v-model:show="showPop">
-      <app-list v-if="showPop" />
+    <pop-view v-model:show="showApplist">
+      <app-list v-if="showApplist" />
     </pop-view>
     <nav-bar
       v-model:page-name="pageName"
-      v-model:showPop="showPop"
-      :show-plus="isActive"
-      @plusClick="plusClick"
+      v-model:show-applist="showApplist"
     />
   </view>
   <w-modal
@@ -20,24 +18,17 @@
 </template>
 
 <script setup lang="ts">
-import AppList from '@/components/AppList/index.vue';
-import NavBar from '@/components/NavBar/index.vue';
-import PopView from '@/components/PopView/index.vue';
-import Home from '@/components/Home/index.vue';
-import My from '@/components/My/index.vue';
+import { AppList, NavBar, PopView, Home, My } from '@/components/index';
 import Taro from '@tarojs/taro';
 import { WModal } from '@/components/modal';
-import { ZFService } from '@/services';
-import { computed, ref } from 'vue';
-import store, { serviceStore, systemStore } from '@/store';
+import { ref } from 'vue';
+import store, { systemStore } from '@/store';
 import { updateInfo } from '@/constants/index';
 import './index.scss';
 
-const showPop = ref(false);
+const showApplist = ref(false);
 const pageName = ref('home');
 const showUpdateInfo = ref(false);
-
-ZFService.getTodayLessonTable();
 
 const updateManager = Taro.getUpdateManager();
 
@@ -53,17 +44,18 @@ updateManager.onUpdateReady(function () {
   });
 });
 
-const newVersion = updateInfo.version;
-if (newVersion && systemStore.version !== newVersion) {
-  store.commit('setVersion', newVersion);
-  showUpdateInfo.value = true;
-}
+/**
+ * 检查本地版本变量
+ *
+ * 要和小程序的平台版本区分开
+ */
+const checkoutUpdate = () => {
+  const newVersion = updateInfo.version;
+  if (newVersion && systemStore.version !== newVersion) {
+    store.commit('setVersion', newVersion);
+    showUpdateInfo.value = true;
+  }
+};
+checkoutUpdate();
 
-function plusClick() {
-  showPop.value = !showPop.value;
-}
-
-const isActive = computed(() => {
-  return serviceStore.user.isActive;
-});
 </script>
