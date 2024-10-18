@@ -63,10 +63,10 @@
 
 <script setup lang="ts">
 import { ThemeConfig, TitleBar, Card, WSkeleton } from "@/components";
-import { useRequest } from "@/hooks";
+import { useRequestNext } from "@/hooks";
 import { LostfoundService } from "@/services";
 import { LostfoundRecord } from "@/types/Lostfound";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import PreviewCard from "./PreviewCard/index.vue";
 import ContactMe from "./ContactMe/index.vue";
 import { omit } from "lodash-es";
@@ -74,6 +74,8 @@ import "./index.scss";
 import store, { serviceStore } from "@/store";
 import WModal from "../../components/Modal/index.vue";
 import { helpText } from "@/constants/copywriting";
+import { RequestError } from "@/utils";
+import Taro from "@tarojs/taro";
 
 const currentPage = ref(0);
 const maxPage = ref(0);
@@ -87,18 +89,23 @@ const isEmpty = ref(false);
 const helpContent = ref(helpText.lostfound);
 const isShowHelp = ref(false);
 
-const { data: getKindsResponse } = useRequest(
-  LostfoundService.getKindList, {
-    onSuccess: (res) => {
-      if (res.data.code !== 1) throw new Error(res.data.msg);
-    },
-    onError: (e: Error) => {
-      return `获取分类失败\r\n${e.message || "网络错误"}`;
+const { data: kindList } = useRequestNext(
+  () => LostfoundService
+    .getKindList()
+    .then(list => ["全部", ...list.map(_ => _.kind_name)]),
+  {
+    initialData: [],
+    onError: (e: any) => {
+      if (e instanceof RequestError)
+        Taro.showToast({
+          title: `获取分类失败\r\n${e.message}`,
+          icon: "none"
+        });
     }
   }
 );
 
-const { loading, run } = useRequest(
+const { loading, run } = useRequestNext(
   LostfoundService.getRecords, {
     defaultParams: {
       campus: selectCampus.value,
@@ -106,19 +113,19 @@ const { loading, run } = useRequest(
       page_size: 10,
       lost_or_found: ""
     },
-    loadingDelay: 300,
+    minLoadingTime: 300,
+    initialData: { data: [], total_page_num: 0 },
     onSuccess: (res) => {
-      if (res.data.code === 1) {
-        recordList.value = recordList.value?.concat(
-          res.data.data.data
-        );
-        if (recordList.value.length === 0) isEmpty.value = true;
-        maxPage.value = res.data.data.total_page_num;
-        currentPage.value++;
-      } else throw new Error(res.data.msg);
+      recordList.value = recordList.value?.concat(
+        res.data
+      );
+      if (recordList.value.length === 0) isEmpty.value = true;
+      maxPage.value = res.total_page_num;
+      currentPage.value++;
     },
-    onError: (e: Error) => {
-      return `加载失物寻物信息失败\r\n${e.message || "网络错误"}`;
+    onError: (e) => {
+      if (e instanceof RequestError)
+        Taro.showToast({ title: `加载失物寻物信息失败\r\n${e.message}`, icon: "none" });
     }
   }
 );
@@ -133,12 +140,6 @@ const getRecords = (data: {
   isEmpty.value = false;
   run(omit(data, [data.kind === "全部" ? "kind" : null, data.lost_or_found === "全部" ? "lost_or_found" : ""]));
 };
-
-const kindList = computed<string[]>(() => [
-  "全部",
-  ...(getKindsResponse.value?.data || [])
-    .map(item => item.kind_name)
-]);
 
 const handleSelectCampus = (campus: string) => {
   if (selectCampus.value === campus) return;
